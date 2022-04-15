@@ -5,53 +5,61 @@ import java.io.BufferedReader
 import java.util.ArrayList
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-fun printAccount(bankAccount: Account) {
+import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+fun printAccount(account: Account) {
 
     println(
-            bankAccount.id.toString() + "\t \t \t"+
-                    bankAccount.creationDate.toString()+ "\t \t \t"+
-                    bankAccount.firstName+ "\t \t \t"+
-                    bankAccount.lastName+ "\t \t \t"+
-                    bankAccount.type+ "\t \t \t"+
-                    bankAccount.interestRate+ "\t \t \t"+
-                    bankAccount.balance
+        account.id.toString() + "\t \t \t"+
+                account.creationDate.toString()+ "\t \t \t"+
+                account.firstName+ "\t \t \t"+
+                account.lastName+ "\t \t \t"+
+                account.type+ "\t \t \t"+
+                account.interestRate+ "\t \t \t"+
+                account.balance
     )
 }
 
 fun printAccountHead() {
     println("Id\t\t\tcreationDate\t\tFirstName\t\tLastName\t\ttype\t\tRate\t\tBalance")
-
 }
 
-fun printAccounts(bankAccounts: List<Account>) {
+fun printAccounts(accounts: List<Account>) {
     printAccountHead()
-    bankAccounts.forEach {
+    accounts.forEach {
         printAccount(it)
     }
 }
 
 fun readAccounts(): ArrayList<Account> {
     var bankAccounts = arrayListOf<Account>()
-    val file = File("C:\\Users\\Seyf_GOUMEIDA\\IdeaProjects\\kata\\src\\main\\kotlin\\Bank-Account.txt")
+    val path = System.getProperty("user.dir") +"\\src\\main\\kotlin\\Bank-Account.csv"
+    val file = File(path)
     val text = file.readText()
     text.split("\n").forEach {
-        val line = it.split(", ")
-        if(line.size > 1) {
+        val line = it.split(";")
+        if(line.isNotEmpty()) {
             val id = line[0].removeSurrounding("\"").toInt()
             val date = line[1].removeSurrounding("\"")
             val creationDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
             val firstname = line[2].removeSurrounding("\"")
             val lastname = line[3].removeSurrounding("\"")
             val type = line[4].removeSurrounding("\"")
+            var indexType=0
+            when (type) {
+                "Basic" -> indexType = 0
+                "Student" -> indexType = 1
+                "Individual" -> indexType = 2
+                "Joint" -> indexType = 3
+            }
             val interestRate = line[5].toDouble()
-            val balance = line[6].substring(0, line[5].length - 1).toInt()
-            val bankAccount = Account(id,creationDate, firstname,lastname, type, interestRate, balance)
-
+            val balance = line[6].toInt()
+            val bankAccount = Account(id,creationDate, firstname,lastname, AccountTypes.values()[indexType], interestRate, balance)
             bankAccounts.add(bankAccount)
         }
     }
-
     return bankAccounts
 }
 
@@ -70,89 +78,88 @@ fun newAccount(input: BufferedReader): Account {
     println("Enter New Account Data:")
     print("\t • Account No.:")
     val id = input.readLine().toInt()
-
+    // Today's date is the date of creation (automatique)
     val creationDate = LocalDate.now()
     println("\t • Date of creation :$creationDate")
 
+    // type the firstname
     print("\t • FirstName:")
     val firstname = input.readLine()
 
+    // type the lasttname
     print("\t • LastName: ")
     val lastname = input.readLine()
 
-
+    // type the account type
     print("\t • Account Type: (1)Basic  (2)Student  (3)Individual (4)Joint")
-    var type = input.readLine()
-
-    while (type!="1" && type!="2"&& type!="3"&& type!="4"){
+    var typeNumber = input.readLine()
+    var type =AccountTypes.Basic
+    while (typeNumber!="1" && typeNumber!="2"&& typeNumber!="3"&& typeNumber!="4"){
             println("type is out of choices please choose :")
             print("\t • Account Type: (1)Basic  (2)Student  (3)Individual (4)Joint")
-        type = input.readLine()
+        typeNumber = input.readLine()
     }
-
-    when (type) {
-        "1" -> {
-            println("\t • type : Basic")
-            type ="Basic"
-        }
-        "2" -> {
-            println("\t • type : Student")
-            type ="Student"
-        }
-        "3" -> {
-            println("\t • type : Individual")
-            type ="Individual"
-        }
-        "4" -> {
-            println("\t • type : Joint")
-            type ="Joint"
-        }
+    when (typeNumber) {
+        "1" -> { println("\t • type : Basic")
+            type =AccountTypes.Basic }
+        "2" -> { println("\t • type : Student")
+            type =AccountTypes.Student }
+        "3" -> { println("\t • type : Individual")
+            type =AccountTypes.Individual }
+        "4" -> { println("\t • type : Joint")
+            type =AccountTypes.Joint }
     }
-
+    // type the rate
     print("\t • Interest Rate:")
     val interestRate = input.readLine().toDouble()
+    // type the Balance
     print("\t • Balance:")
     val balance = input.readLine().toInt()
 
+    //----------------------------------------------------------------------------------------------------------
+    // Insert the new account in the database (the File)
+    val path = System.getProperty("user.dir") +"\\src\\main\\kotlin\\Bank-Account.csv"
+    val text = "\n\"$id\";\"$creationDate\";\"$firstname\";\"$lastname\";\"$type\";$interestRate;$balance;"
+    try {
+        Files.write(Paths.get(path), text.toByteArray(), StandardOpenOption.APPEND)
+    } catch (e: IOException) {
+    }
     return Account(id, creationDate,firstname,lastname, type, interestRate, balance)
 }
 
 fun main(args: Array<String>) {
-
-    var account = readAccounts()
-
+    var accounts = readAccounts()
     printBanner()
-
     while(true) {
         val input = BufferedReader(InputStreamReader(System.`in`))
-
-        print("==> ")
+        print("===> ")
         val choice = input.read()
-
-        if(choice == 69) {
+        // ascii of "1" is 49
+        if(choice == 49) {
             // Enter new accounts
-            val bankAccount = newAccount(input)
-            account.add(bankAccount)
-        } else if(choice == 67) {
+            val account = newAccount(input)
+            accounts.add(account)
+        // ascii of "2" is 50
+        } else if(choice == 50) {
             // Check the account
             input.readLine()
             print("Enter account_no: ")
             val number = input.readLine().toInt()
-            val bankAccount = account.find { it.id == number }
-            if(bankAccount != null) {
+            val account = accounts.find { it.id == number }
+            if(account != null) {
                 printAccountHead()
-                printAccount(bankAccount)
+                printAccount(account)
             }
-
-        } else if(choice == 83) {
+        // ascii of "1" is 51
+        } else if(choice == 51) {
             // Show sorted list by number
-            account.sortBy { it.id }
-            printAccounts(account)
-        } else if(choice == 120) {
+            accounts.sortBy { it.id }
+            printAccounts(accounts)
+        // ascii of "1" is 49
+        } else if(choice == 52) {
             // Exit the program
             break
         }
-
     }
 }
 

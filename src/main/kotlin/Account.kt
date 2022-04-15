@@ -6,7 +6,7 @@ data class Account(
     val creationDate : LocalDate,
     val firstName: String,
     val lastName: String,
-    val type: String,
+    val type: AccountTypes,
     val interestRate: Double,
     val balance: Int
 )
