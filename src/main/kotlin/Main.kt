@@ -4,6 +4,9 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
+
 //#####################          Functions           #############################
 //#####################           Account            #############################
 fun printAccountHead() {
@@ -142,7 +145,6 @@ fun readAccounts(): ArrayList<Account> {
     }
     return bankAccounts
 }
-
 //#####################          Operations          #############################
 fun printOperationHead() {
     println("Id\t\t\tType\t\t\tDate\t\t\t\tAmount\t\tbalanceBeforeOp\t\tbalanceAfterOp")
@@ -308,7 +310,8 @@ fun printBanner() {
     println("\t • 3 - Check Account Record")
     println("\t • 4 - Show Sorted Account List")
     println("\t • 5 - Show Operations List")
-    println("\t • 6 - Exit")
+    println("\t • 6 - Show Account statement")
+    println("\t • 7 - Exit")
 }
 //this function is just to remove the first line from the file
 //we use it when we update the Balance
@@ -331,6 +334,11 @@ fun removeFirstLineFromFile(filePath: String?) {
     }
     raf.setLength(writePosition)
     raf.close()
+}
+fun printstatement(id: Int){
+    var accounts = readAccounts()
+    printAccount(accounts[id])
+    return
 }
 //######################            MAIN             ###############################
 fun main() {
@@ -373,6 +381,28 @@ fun main() {
             printOperations(operations)
             // ascii of "6" is 54
         } else if(choice == 54) {
+            val reader = Scanner(System.`in`)
+            var id = 0
+            try{
+                println("Enter account ID: ")
+                id = reader.nextInt()
+                println("Enter Your password : ")
+                val password = reader.next()
+                println("##################################################################################")
+                printstatement(id-1)
+                println("##################################################################################")
+
+
+            }catch (ex:Exception){
+                println("############################")
+                println("####   Invalide Index !#####")
+                println("############################")
+
+
+            }
+
+            // ascii of "7" is 55
+        }else if(choice == 55) {
             // Exit the program
             break
         }
