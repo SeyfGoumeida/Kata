@@ -13,7 +13,6 @@ fun printAccountHead() {
     println("Id\t\t\tcreationDate\t\tFirstName\t\tLastName\t\ttype\t\tRate\t\tBalance")
 }
 fun printAccount(account: Account) {
-
     println(
         account.id.toString() + "\t \t \t"+
                 account.creationDate.toString()+ "\t \t \t"+
@@ -339,20 +338,22 @@ fun removeFirstLineFromFile(filePath: String?) {
     raf.close()
 }
 //#################         Account statement & history             ######################
-fun printAccountHistory(id: Int){
+fun printAccountHistory(id: Int):ArrayList<Operation> {
     var operations = readOperations()
+    var acount_history =ArrayList<Operation>()
     printOperationHead()
     for (operation in operations){
         if(operation.clientId.toInt()==id.toInt()){
             printOperation(operation)
+            acount_history.add(operation)
         }
     }
-    return
+    return acount_history
 }
-fun printstatement(id: Int){
+fun printstatement(id: Int):Account{
     var accounts = readAccounts()
     printAccount(accounts[id])
-    return
+    return accounts[id]
 }
 //######################            MAIN             ###############################
 fun main() {

@@ -1,7 +1,5 @@
 import java.time.LocalDate
 import java.util.ArrayList
-import java.util.Date
-
 data class Account(
     val id: Int,
     val creationDate : LocalDate,
