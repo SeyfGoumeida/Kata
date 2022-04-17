@@ -4,8 +4,11 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
-
+//#####################          Functions           #############################
+//#####################           Account            #############################
+fun printAccountHead() {
+    println("Id\t\t\tcreationDate\t\tFirstName\t\tLastName\t\ttype\t\tRate\t\tBalance")
+}
 fun printAccount(account: Account) {
 
     println(
@@ -18,107 +21,11 @@ fun printAccount(account: Account) {
                 account.balance
     )
 }
-fun printOperation(operation: Operation) {
-
-    println(
-        operation.clientId.toString() + "\t \t \t"+
-                operation.type+ "\t \t \t"+
-                operation.date.toString()+ "\t \t \t"+
-                operation.amount+ "\t \t \t"+
-                operation.balanceBeforeOp+ "\t \t \t"+
-                operation.balanceAfterOp+ "\t \t \t"
-    )
-}
-fun printAccountHead() {
-    println("Id\t\t\tcreationDate\t\tFirstName\t\tLastName\t\ttype\t\tRate\t\tBalance")
-}
-fun printOperationHead() {
-    println("Id\t\t\tType\t\t\tDate\t\t\t\tAmount\t\tbalanceBeforeOp\t\tbalanceAfterOp")
-}
 fun printAccounts(accounts: List<Account>) {
     printAccountHead()
     accounts.forEach {
         printAccount(it)
     }
-}
-fun printOperations(operations: List<Operation>) {
-    printOperationHead()
-    operations.forEach {
-        printOperation(it)
-    }
-}
-fun readAccounts(): ArrayList<Account> {
-    val bankAccounts = arrayListOf<Account>()
-    val path = System.getProperty("user.dir") +"\\src\\main\\kotlin\\Bank-Account.csv"
-    val file = File(path)
-    val text = file.readText()
-    text.split("\n").forEach {
-        val line = it.split(";")
-        if(line.isNotEmpty()) {
-            val id = line[0].toInt()
-            val date = line[1]
-            val creationDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
-            val firstname = line[2]
-            val lastname = line[3]
-            val type = line[4]
-            var indexType=0
-            when (type) {
-                "Basic" -> indexType = 0
-                "Student" -> indexType = 1
-                "Individual" -> indexType = 2
-                "Joint" -> indexType = 3
-            }
-            val interestRate = line[5].toDouble()
-            val balance = line[6].toDouble()
-            val operations = arrayListOf<Operation>()
-            val bankAccount = Account(id,creationDate, firstname,lastname, AccountTypes.values()[indexType], interestRate, balance,
-                operations
-            )
-            bankAccounts.add(bankAccount)
-        }
-    }
-    return bankAccounts
-}
-fun readOperations(): ArrayList<Operation> {
-    val accountOperations = arrayListOf<Operation>()
-    val path = System.getProperty("user.dir") + "\\src\\main\\kotlin\\Bank-Operation.csv"
-    val file = File(path)
-    val text = file.readText()
-    text.split("\n").forEach {
-        val line = it.split(";")
-        if (line.isNotEmpty()) {
-            val id =  line[0].toInt()
-            val idClient = line[1].toInt()
-            val type = line[2]
-            var indexType = 0
-            when (type) {
-                "Deposit" -> indexType = 0
-                "Withdrawal" -> indexType = 1
-            }
-            val date = line[3]
-            val creationDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
-
-            val amount = line[4].toDouble()
-            val balanceBeforeOp = line[5].toDouble()
-            val balanceAfterOp = line[6].toDouble()
-
-            val operation = Operation(
-                id,idClient, OperationTypes.values()[indexType],creationDate, amount, balanceBeforeOp,balanceAfterOp)
-            accountOperations.add(operation)
-        }
-    }
-    return accountOperations
-}
-fun printBanner() {
-    println("Bank Account Management Main Menu:")
-    println()
-    println("Please select an option from the following menu:")
-    println("\t • 1 - Enter New Accounts")
-    println("\t • 2 - Enter New Operation")
-    println("\t • 3 - Check Account Record")
-    println("\t • 4 - Show Sorted Account List")
-    println("\t • 5 - Show Operations List")
-    println("\t • 6 - Exit")
 }
 fun newAccount(input: BufferedReader): Account {
     input.readLine()
@@ -203,6 +110,60 @@ fun newAccount(input: BufferedReader): Account {
     val operations = arrayListOf<Operation>()
     return Account(id, creationDate, firstname, lastname, type, interestRate, balance,operations)
 }
+fun readAccounts(): ArrayList<Account> {
+    val bankAccounts = arrayListOf<Account>()
+    val path = System.getProperty("user.dir") +"\\src\\main\\kotlin\\Bank-Account.csv"
+    val file = File(path)
+    val text = file.readText()
+    text.split("\n").forEach {
+        val line = it.split(";")
+        if(line.isNotEmpty()) {
+            val id = line[0].toInt()
+            val date = line[1]
+            val creationDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
+            val firstname = line[2]
+            val lastname = line[3]
+            val type = line[4]
+            var indexType=0
+            when (type) {
+                "Basic" -> indexType = 0
+                "Student" -> indexType = 1
+                "Individual" -> indexType = 2
+                "Joint" -> indexType = 3
+            }
+            val interestRate = line[5].toDouble()
+            val balance = line[6].toDouble()
+            val operations = arrayListOf<Operation>()
+            val bankAccount = Account(id,creationDate, firstname,lastname, AccountTypes.values()[indexType], interestRate, balance,
+                operations
+            )
+            bankAccounts.add(bankAccount)
+        }
+    }
+    return bankAccounts
+}
+
+//#####################          Operations          #############################
+fun printOperationHead() {
+    println("Id\t\t\tType\t\t\tDate\t\t\t\tAmount\t\tbalanceBeforeOp\t\tbalanceAfterOp")
+}
+fun printOperation(operation: Operation) {
+
+    println(
+        operation.clientId.toString() + "\t \t \t"+
+                operation.type+ "\t \t \t"+
+                operation.date.toString()+ "\t \t \t"+
+                operation.amount+ "\t \t \t"+
+                operation.balanceBeforeOp+ "\t \t \t"+
+                operation.balanceAfterOp+ "\t \t \t"
+    )
+}
+fun printOperations(operations: List<Operation>) {
+    printOperationHead()
+    operations.forEach {
+        printOperation(it)
+    }
+}
 fun newOperation(input: BufferedReader): Operation {
     input.readLine()
     println("Enter New Account Data:")
@@ -245,7 +206,7 @@ fun newOperation(input: BufferedReader): Operation {
     println("\t • Date of creation :$creationDate")
 
     // type the amount
-    println("\t • Amount: ")
+    print("\t • Amount: ")
     var error = true
     var amount = 0.0
     while (error) {
@@ -309,9 +270,49 @@ fun newOperation(input: BufferedReader): Operation {
     removeFirstLineFromFile(path)
     return Operation(id, idClient, type,creationDate, amount, amount, amount)
 }
-@Throws(IOException::class)
+fun readOperations(): ArrayList<Operation> {
+    val accountOperations = arrayListOf<Operation>()
+    val path = System.getProperty("user.dir") + "\\src\\main\\kotlin\\Bank-Operation.csv"
+    val file = File(path)
+    val text = file.readText()
+    text.split("\n").forEach {
+        val line = it.split(";")
+        if (line.isNotEmpty()) {
+            val id =  line[0].toInt()
+            val idClient = line[1].toInt()
+            val type = line[2]
+            var indexType = 0
+            when (type) {
+                "Deposit" -> indexType = 0
+                "Withdrawal" -> indexType = 1
+            }
+            val date = line[3]
+            val creationDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
+
+            val amount = line[4].toDouble()
+            val balanceBeforeOp = line[5].toDouble()
+            val balanceAfterOp = line[6].toDouble()
+
+            val operation = Operation(
+                id,idClient, OperationTypes.values()[indexType],creationDate, amount, balanceBeforeOp,balanceAfterOp)
+            accountOperations.add(operation)
+        }
+    }
+    return accountOperations
+}
+fun printBanner() {
+    println("                  Main Menu:                    ")
+    println("Please select an option from the following menu:")
+    println("\t • 1 - Enter New Accounts")
+    println("\t • 2 - Enter New Operation")
+    println("\t • 3 - Check Account Record")
+    println("\t • 4 - Show Sorted Account List")
+    println("\t • 5 - Show Operations List")
+    println("\t • 6 - Exit")
+}
 //this function is just to remove the first line from the file
 //we use it when we update the Balance
+@Throws(IOException::class)
 fun removeFirstLineFromFile(filePath: String?) {
     val raf = RandomAccessFile(filePath, "rw")
     //Initial write position
@@ -331,12 +332,10 @@ fun removeFirstLineFromFile(filePath: String?) {
     raf.setLength(writePosition)
     raf.close()
 }
-
-//###############        MAIN             ###############################
+//######################            MAIN             ###############################
 fun main() {
-
-    printBanner()
     while(true) {
+        printBanner()
         val input = BufferedReader(InputStreamReader(System.`in`))
         print("===> ")
         val choice = input.read()
