@@ -148,6 +148,7 @@ fun readAccounts(): ArrayList<Account> {
 //#####################          Operations          #############################
 fun printOperationHead() {
     println("Id\t\t\tType\t\t\tDate\t\t\t\tAmount\t\tbalanceBeforeOp\t\tbalanceAfterOp")
+    println("-------------------------------------------------------------------------------------------")
 }
 fun printOperation(operation: Operation) {
 
@@ -168,8 +169,7 @@ fun printOperations(operations: List<Operation>) {
 }
 fun newOperation(input: BufferedReader): Operation {
     input.readLine()
-    println("Enter New Account Data:")
-    print("\t • Account ID :")
+    print("\t • Account ID concerned by the operation:")
     val idClient=input.readLine().toInt()
 
     print("\t • Operation ID :")
@@ -303,15 +303,18 @@ fun readOperations(): ArrayList<Operation> {
     return accountOperations
 }
 fun printBanner() {
+    println("################################################")
     println("                  Main Menu:                    ")
+    println("################################################")
     println("Please select an option from the following menu:")
     println("\t • 1 - Enter New Accounts")
     println("\t • 2 - Enter New Operation")
     println("\t • 3 - Check Account Record")
     println("\t • 4 - Show Sorted Account List")
     println("\t • 5 - Show Operations List")
-    println("\t • 6 - Show Account statement")
-    println("\t • 7 - Exit")
+    println("\t • 6 - Show Account Statement")
+    println("\t • 7 - Show Account History")
+    println("\t • 8 - Exit")
 }
 //this function is just to remove the first line from the file
 //we use it when we update the Balance
@@ -334,6 +337,17 @@ fun removeFirstLineFromFile(filePath: String?) {
     }
     raf.setLength(writePosition)
     raf.close()
+}
+//#################         Account statement & history             ######################
+fun printAccountHistory(id: Int){
+    var operations = readOperations()
+    printOperationHead()
+    for (operation in operations){
+        if(operation.clientId.toInt()==id.toInt()){
+            printOperation(operation)
+        }
+    }
+    return
 }
 fun printstatement(id: Int){
     var accounts = readAccounts()
@@ -388,21 +402,36 @@ fun main() {
                 id = reader.nextInt()
                 println("Enter Your password : ")
                 val password = reader.next()
-                println("##################################################################################")
+                println("############################################################################################################")
                 printstatement(id-1)
-                println("##################################################################################")
+                println("############################################################################################################")
 
 
             }catch (ex:Exception){
                 println("############################")
                 println("####   Invalide Index !#####")
                 println("############################")
-
-
             }
-
             // ascii of "7" is 55
         }else if(choice == 55) {
+
+            val reader = Scanner(System.`in`)
+            var id = 0
+            try{
+                println("Enter account ID: ")
+                id = reader.nextInt()
+                println("Enter Your password : ")
+                val password = reader.next()
+                println("############################################################################################################")
+                printAccountHistory(id)
+                println("############################################################################################################")
+            }catch (ex:Exception){
+                println("############################")
+                println("####   Invalide Index !#####")
+                println("############################")
+            }
+            // ascii of "8" is 56
+        }else if(choice == 56) {
             // Exit the program
             break
         }
