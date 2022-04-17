@@ -1,4 +1,5 @@
 import java.time.LocalDate
+import java.util.ArrayList
 import java.util.Date
 
 data class Account(
@@ -8,5 +9,6 @@ data class Account(
     val lastName: String,
     val type: AccountTypes,
     val interestRate: Double,
-    val balance: Double
+    val balance: Double,
+    val operatins : ArrayList<Operation>
 )
