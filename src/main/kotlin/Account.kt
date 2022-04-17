@@ -8,5 +8,5 @@ data class Account(
     val lastName: String,
     val type: AccountTypes,
     val interestRate: Double,
-    val balance: Int
+    val balance: Double
 )
