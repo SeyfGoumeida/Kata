@@ -9,6 +9,6 @@ data class Account(
     val lastName: String,
     val type: AccountTypes,
     val interestRate: Double,
-    val balance: Double,
+    var balance: Double,
     val operatins : ArrayList<Operation>
 )

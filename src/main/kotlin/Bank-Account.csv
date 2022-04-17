@@ -1,9 +1,8 @@
-1;2022-04-14;Seyf;GOUMEIDA;Basic;2.5;1000;
-2;2022-04-15;Claire;DELFORGE;Basic;2.5;1000;
-3;2022-04-16;Person3;Person3;Student;1.5;1000;
-4;2022-04-17;Person4;Person4;Student;2.5;1000;
-5;2022-04-18;Person5;Person5;Individual;2.75;1000;
-6;2022-04-19;Person6;Person6;Individual;3.5;1000;
-7;2022-04-20;Person7;Person7;Joint;2.0;1000;
-8;2022-04-21;Person8;Person8;Joint;3.0;1000;
-9;2022-04-17;ssss;ssss;Individual;23.0;1000;
+1;2022-04-14;Seyf;GOUMEIDA;Basic;2.5;1000.0;
+2;2022-04-15;Claire;DELFORGE;Basic;2.5;1000.0;
+3;2022-04-16;Person3;Person 3;Student;1.5;1000.0;
+4;2022-04-17;Person4;Person 4;Student;2.5;1000.0;
+5;2022-04-18;Person5;Person 5;Individual;2.7;1000.0;
+6;2022-04-19;Person6;Person 6;Individual;3.5;1000.0;
+7;2022-04-20;Person7;Person 7;Joint;2.0;1000.0;
+8;2022-04-21;Person8;Person 8;Joint;3.0;1000.0;
