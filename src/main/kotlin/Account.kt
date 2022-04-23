@@ -6,7 +6,6 @@ data class Account(
     val firstName: String,
     val lastName: String,
     val type: AccountTypes,
-    val interestRate: Double,
     var balance: Double,
-    val operatins : ArrayList<Operation>
+    val operations : ArrayList<Operation>
 )

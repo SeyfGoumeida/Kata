@@ -1,3 +1,5 @@
+@file:Suppress("NAME_SHADOWING")
+
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -7,10 +9,10 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
-//#####################          Functions           #############################
-//#####################           Account            #############################
+//#####################  Functions #############################
+//#####################   Account  #############################
 fun printAccountHead() {
-    println("Id\t\t\tcreationDate\t\tFirstName\t\tLastName\t\ttype\t\tRate\t\tBalance")
+    println("Id\t\t\tcreationDate\t\tFirstName\t\tLastName\t\t\ttype\t\t\tBalance")
 }
 fun printAccount(account: Account) {
     println(
@@ -19,7 +21,6 @@ fun printAccount(account: Account) {
                 account.firstName+ "\t \t \t"+
                 account.lastName+ "\t \t \t"+
                 account.type+ "\t \t \t"+
-                account.interestRate+ "\t \t \t"+
                 account.balance
     )
 }
@@ -29,9 +30,7 @@ fun printAccounts(accounts: List<Account>) {
         printAccount(it)
     }
 }
-fun newAccount(input: BufferedReader): Account {
-    input.readLine()
-    println("Enter New Account Data:")
+fun newAccount(firstname:String,lastname:String,typeNumber:String): Account {
     print("\t • Account ID :")
     // get the list of the existing ids
     val accounts = readAccounts()
@@ -42,27 +41,11 @@ fun newAccount(input: BufferedReader): Account {
     // the new id is the last one +1
     println(listOfIds.last() + 1)
     val id = listOfIds.last() + 1
-    // Today's date is the date of creation (automatique)
+    // Today's date is the date of creation (automatic)
     val creationDate = LocalDate.now()
     println("\t • Date of creation :$creationDate")
 
-    // type the firstname
-    print("\t • FirstName:")
-    val firstname = input.readLine()
-
-    // type the lasttname
-    print("\t • LastName: ")
-    val lastname = input.readLine()
-
-    // type the account type
-    print("\t • Account Type: (1)Basic  (2)Student  (3)Individual (4)Joint")
-    var typeNumber = input.readLine()
     var type = AccountTypes.Basic
-    while (typeNumber != "1" && typeNumber != "2" && typeNumber != "3" && typeNumber != "4") {
-        println("type is out of choices please choose :")
-        print("\t • Account Type: (1)Basic  (2)Student  (3)Individual (4)Joint")
-        typeNumber = input.readLine()
-    }
     when (typeNumber) {
         "1" -> {
             println("\t • type : Basic")
@@ -81,36 +64,22 @@ fun newAccount(input: BufferedReader): Account {
             type = AccountTypes.Joint
         }
     }
-    // type the rate
-    println("\t • Interest Rate: 0")
-    var error = true
-    var interestRate = 0.0
-    while (error) {
-        error = try {
-            //interestRate = input.readLine().toDouble()
-            interestRate = 0.0
-            false
-        } catch (ex: NumberFormatException) {
-            print("\t • You have to choose a number for Interest Rate:")
-            true
-        }
-    }
+
     // type the Balance
     println("\t • Balance: 0.0$")
     val balance = 0.0
 
-
     //----------------------------------------------------------------------------------------------------------
     // Insert the new account in the database (the File)
     val path = System.getProperty("user.dir") + "\\src\\main\\kotlin\\Bank-Account.csv"
-    val text = "\n$id;$creationDate;$firstname;$lastname;$type;$interestRate;$balance;"
+    val text = "\n$id;$creationDate;$firstname;$lastname;$type;$balance;"
     try {
         Files.write(Paths.get(path), text.toByteArray(), StandardOpenOption.APPEND)
     } catch (e: IOException) {
-        print("erreur")
+        print("error")
     }
     val operations = arrayListOf<Operation>()
-    return Account(id, creationDate, firstname, lastname, type, interestRate, balance,operations)
+    return Account(id, creationDate, firstname, lastname, type, balance,operations)
 }
 fun readAccounts(): ArrayList<Account> {
     val bankAccounts = arrayListOf<Account>()
@@ -133,10 +102,9 @@ fun readAccounts(): ArrayList<Account> {
                 "Individual" -> indexType = 2
                 "Joint" -> indexType = 3
             }
-            val interestRate = line[5].toDouble()
-            val balance = line[6].toDouble()
+            val balance = line[5].toDouble()
             val operations = arrayListOf<Operation>()
-            val bankAccount = Account(id,creationDate, firstname,lastname, AccountTypes.values()[indexType], interestRate, balance,
+            val bankAccount = Account(id,creationDate, firstname,lastname, AccountTypes.values()[indexType], balance,
                 operations
             )
             bankAccounts.add(bankAccount)
@@ -144,7 +112,7 @@ fun readAccounts(): ArrayList<Account> {
     }
     return bankAccounts
 }
-//#####################          Operations          #############################
+//#####################  Operations  #############################
 fun printOperationHead() {
     println("Id\t\t\tType\t\t\tDate\t\t\t\tAmount\t\tbalanceBeforeOp\t\tbalanceAfterOp")
     println("-------------------------------------------------------------------------------------------")
@@ -166,10 +134,7 @@ fun printOperations(operations: List<Operation>) {
         printOperation(it)
     }
 }
-fun newOperation(input: BufferedReader): Operation {
-    input.readLine()
-    print("\t • Account ID concerned by the operation:")
-    val idClient=input.readLine().toInt()
+fun newOperation(idClient:String,typeNumber:String,amount:String): Operation {
 
     print("\t • Operation ID :")
     // get the list of the existing operations
@@ -183,14 +148,7 @@ fun newOperation(input: BufferedReader): Operation {
     var id = listOfIds.last() + 1
 
     // type the account type
-    print("\t • Account Type: (1)Deposit  (2)Withdrawal")
-    var typeNumber = input.readLine()
     var type = OperationTypes.Deposit
-    while (typeNumber != "1" && typeNumber != "2") {
-        println("type is out of choices please choose :")
-        print("\t • Account Type: (1)Deposit  (2)Withdrawal")
-        typeNumber = input.readLine()
-    }
     when (typeNumber) {
         "1" -> {
             println("\t • type : Deposit")
@@ -202,49 +160,36 @@ fun newOperation(input: BufferedReader): Operation {
         }
     }
 
-    // Today's date is the date of creation (automatique)
-    var creationDate = LocalDate.now()
-    println("\t • Date of creation :$creationDate")
+    // Today's date is the date of creation (automatic)
+    var date = LocalDate.now()
+    println("\t • Date of creation :$date")
 
-    // type the amount
-    print("\t • Amount: ")
-    var error = true
-    var amount = 0.0
-    while (error) {
-        error = try {
-            amount = input.readLine().toDouble()
-            false
-        } catch (ex: NumberFormatException) {
-            print("\t • You have to choose a number for amount:")
-            true
-        }
-    }
     // get the list of the existing accounts
     val accounts = readAccounts()
-    listOfIds = mutableListOf<Int>()
+    listOfIds = mutableListOf()
     for (i in accounts) {
         listOfIds.add(i.id)
     }
-    val indexOfAccount = listOfIds.indexOf(idClient)
+    val indexOfAccount = listOfIds.indexOf(idClient.toInt())
     val account = accounts[indexOfAccount]
     val balanceBeforeOp = account.balance
-    var balanceAfterOp=0.0
+    val balanceAfterOp: Double
 
     if (typeNumber=="1"){
-        balanceAfterOp = balanceBeforeOp + amount
+        balanceAfterOp = balanceBeforeOp + amount.toDouble()
         accounts[indexOfAccount].balance = balanceAfterOp
     }else {
-        balanceAfterOp = balanceBeforeOp - amount
+        balanceAfterOp = balanceBeforeOp - amount.toDouble()
         accounts[indexOfAccount].balance = balanceAfterOp
     }
     //----------------------------------------------------------------------------------------------------------
     // Insert the new operation in the database (the File)
     var path = System.getProperty("user.dir") + "\\src\\main\\kotlin\\Bank-Operation.csv"
-    var text = "\n$id;$idClient;$type;$creationDate;$amount;$balanceBeforeOp;$balanceAfterOp;"
+    var text = "\n$id;$idClient;$type;$date;$amount;$balanceBeforeOp;$balanceAfterOp;"
     try {
         Files.write(Paths.get(path), text.toByteArray(), StandardOpenOption.APPEND)
     } catch (e: IOException) {
-        print("erreur")
+        print("error")
     }
     // Update the account balance after the operation
     //----------------------------------------------------------------------------------------------------------
@@ -254,22 +199,21 @@ fun newOperation(input: BufferedReader): Operation {
     pw.close()
     for (account in accounts) {
         id = account.id
-        creationDate = account.creationDate
-        var firstname = account.firstName
-        var lastname = account.lastName
-        var typee = account.type
-        var interestRate = account.interestRate
-        var balance = account.balance
-        text = "\n$id;$creationDate;$firstname;$lastname;$typee;$interestRate;$balance;"
+        val creationDate = account.creationDate
+        val firstname = account.firstName
+        val lastname = account.lastName
+        val types = account.type
+        val balance = account.balance
+        text = "\n$id;$creationDate;$firstname;$lastname;$types;$balance;"
         try {
             Files.write(Paths.get(path), text.toByteArray(),StandardOpenOption.APPEND)
         } catch (e: IOException) {
-            print("erreur")
+            print("error")
         }
     }
     //file cleaning ( delete the first line )
     removeFirstLineFromFile(path)
-    return Operation(id, idClient, type,creationDate, amount, amount, amount)
+    return Operation(id, idClient.toInt(), type,date, amount.toDouble(), amount.toDouble(), amount.toDouble())
 }
 fun readOperations(): ArrayList<Operation> {
     val accountOperations = arrayListOf<Operation>()
@@ -337,25 +281,25 @@ fun removeFirstLineFromFile(filePath: String?) {
     raf.setLength(writePosition)
     raf.close()
 }
-//#################         Account statement & history             ######################
+//################# Account statement & history ######################
 fun printAccountHistory(id: Int):ArrayList<Operation> {
-    var operations = readOperations()
-    var acount_history =ArrayList<Operation>()
+    val operations = readOperations()
+    val accountHistory =ArrayList<Operation>()
     printOperationHead()
     for (operation in operations){
-        if(operation.clientId.toInt()==id.toInt()){
+        if(operation.clientId==id){
             printOperation(operation)
-            acount_history.add(operation)
+            accountHistory.add(operation)
         }
     }
-    return acount_history
+    return accountHistory
 }
-fun printstatement(id: Int):Account{
-    var accounts = readAccounts()
+fun printStatement(id: Int):Account{
+    val accounts = readAccounts()
     printAccount(accounts[id])
     return accounts[id]
 }
-//######################            MAIN             ###############################
+//######################  MAIN  ###############################
 fun main() {
     while(true) {
         printBanner()
@@ -365,11 +309,58 @@ fun main() {
         // ascii of "1" is 49
         if(choice == 49) {
             // Enter new accounts
-            newAccount(input)
-        // ascii of "2" is 50
+            println("Enter New Account Data:")
+            //newAccount(input)
+            input.readLine()
+
+            // type the firstname
+            print("\t • FirstName:")
+            val firstname = input.readLine()
+
+            // type the lastname
+            print("\t • LastName: ")
+            val lastname = input.readLine()
+
+            // type the account type
+            print("\t • Account Type: (1)Basic  (2)Student  (3)Individual (4)Joint")
+            var typeNumber = input.readLine()
+            while (typeNumber != "1" && typeNumber != "2" && typeNumber != "3" && typeNumber != "4") {
+                println("type is out of choices please choose :")
+                print("\t • Account Type: (1)Basic  (2)Student  (3)Individual (4)Joint")
+                typeNumber = input.readLine()
+            }
+            newAccount(firstname,lastname,typeNumber)
+            // ascii of "2" is 50
         } else if(choice == 50) {
-            // Enter new accounts
-            newOperation(input)
+            input.readLine()
+            // Enter new operation
+            print("\t • Account ID concerned by the operation:")
+            val idClient=input.readLine().toInt()
+
+            // type the account type
+            print("\t • Account Type: (1)Deposit  (2)Withdrawal")
+            var typeNumber = input.readLine()
+            while (typeNumber != "1" && typeNumber != "2") {
+                println("type is out of choices please choose :")
+                print("\t • Account Type: (1)Deposit  (2)Withdrawal")
+                typeNumber = input.readLine()
+            }
+
+            // type the amount
+            print("\t • Amount: ")
+            var error = true
+            var amount = 0.0
+            while (error) {
+                error = try {
+                    amount = input.readLine().toDouble()
+                    false
+                } catch (ex: NumberFormatException) {
+                    print("\t • You have to choose a number for amount:")
+                    true
+                }
+            }
+
+            newOperation(idClient.toString(),typeNumber,amount.toString())
             // ascii of "3" is 51
         }else if(choice == 51) {
             // Check the account
@@ -397,38 +388,35 @@ fun main() {
             // ascii of "6" is 54
         } else if(choice == 54) {
             val reader = Scanner(System.`in`)
-            var id = 0
+            var id: Int
             try{
                 println("Enter account ID: ")
                 id = reader.nextInt()
-                println("Enter Your password : ")
-                val password = reader.next()
                 println("############################################################################################################")
-                printstatement(id-1)
+                printStatement(id-1)
                 println("############################################################################################################")
 
 
             }catch (ex:Exception){
                 println("############################")
-                println("####   Invalide Index !#####")
+                println("####   Invalid Index !#####")
                 println("############################")
             }
             // ascii of "7" is 55
         }else if(choice == 55) {
 
             val reader = Scanner(System.`in`)
-            var id = 0
+            var id: Int
             try{
                 println("Enter account ID: ")
                 id = reader.nextInt()
                 println("Enter Your password : ")
-                val password = reader.next()
                 println("############################################################################################################")
                 printAccountHistory(id)
                 println("############################################################################################################")
             }catch (ex:Exception){
                 println("############################")
-                println("####   Invalide Index !#####")
+                println("####   Invalid Index !#####")
                 println("############################")
             }
             // ascii of "8" is 56
